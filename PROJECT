@@ -1,0 +1,16 @@
+domain: deeproute.cn
+layout:
+- go.kubebuilder.io/v3
+projectName: kube-credential-helper
+repo: github.com/cccfs/kube-credential-helper
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: deeproute.cn
+  group: crd.k8s
+  kind: Namespace
+  path: github.com/cccfs/kube-credential-helper/api/v1alpha1
+  version: v1alpha1
+version: "3"

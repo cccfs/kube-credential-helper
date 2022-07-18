@@ -1,0 +1,25 @@
+language: go
+go:
+  - 1.17.x
+services:
+  - docker
+os:
+  - linux
+script:
+  - go get ./...
+  - go build -o kube-credential-helper-$TRAVIS_OS_NAME
+
+before_deploy:
+  - IMAGE_NAME=cccfs/kube-credential-helper
+  - docker login -u $DOCKER_ACCOUNT -p $DOCKER_PASSWORD
+  - make docker-build docker-push IMG=$IMAGE_NAME:$TRAVIS_TAG
+
+deploy:
+  provider: releases
+  token: $GITHUB_TOKEN
+  name: kube-credential-helper $TRAVIS_TAG
+  file: kube-credential-helper-$TRAVIS_OS_NAME
+  skip_cleanup: true
+  on:
+    repo: cccfs/kube-credential-helper
+    tags: true

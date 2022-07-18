@@ -1,0 +1,20 @@
+# permissions for end users to view namespaces.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-viewer-role
+rules:
+- apiGroups:
+  - crd.k8s.deeproute.cn
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - crd.k8s.deeproute.cn
+  resources:
+  - namespaces/status
+  verbs:
+  - get

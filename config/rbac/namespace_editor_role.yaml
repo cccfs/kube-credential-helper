@@ -1,0 +1,24 @@
+# permissions for end users to edit namespaces.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-editor-role
+rules:
+- apiGroups:
+  - crd.k8s.deeproute.cn
+  resources:
+  - namespaces
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - crd.k8s.deeproute.cn
+  resources:
+  - namespaces/status
+  verbs:
+  - get

@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kube-credential-helper
+  name: kube-credential-helper
+  namespace: kube-credential-helper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-credential-helper
+  template:
+    metadata:
+      labels:
+        app: kube-credential-helper
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - kube-credential-helper
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      containers:
+        - env:
+            - name: EXCLUDED_NAMESPACE
+              value: kube-system,kube-node-lease,kube-public,default
+            - name: CONFIG_PATH
+              value: /srv/config.ini
+          image: cccfs/kube-credential-helper:v0.0.1
+          imagePullPolicy: Always
+          name: kube-credential-helper
+          ports:
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+            - containerPort: 8081
+              name: health
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          volumeMounts:
+            - mountPath: /srv
+              name: config
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            successThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 8081
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            httpGet:
+              path: /readyz
+              port: 8081
+            timeoutSeconds: 1
+      serviceAccountName: kube-credential-helper
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config
+          secret:
+            defaultMode: 420
+            secretName: config
