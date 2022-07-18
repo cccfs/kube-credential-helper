@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/cccfs/kube-ldap-webhook.svg?branch=master)](https://travis-ci.com/cccfs/kube-credential)  ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cccfs/kube-credential-helper)
 ### kube-credential-helper
 
 ### 组件介绍
